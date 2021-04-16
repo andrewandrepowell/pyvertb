@@ -1,6 +1,6 @@
 import cocotb
 import pytest
-from cocotbext_ver.comm import Process, Input, Output, QueueEmpty
+from pyvert.comm import Process, Input, Output, QueueEmpty
 
 
 @cocotb.test()

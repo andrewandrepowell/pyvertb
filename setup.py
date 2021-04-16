@@ -4,16 +4,16 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="cocotbext-ver",
+    name="pyvert",
     version="0.1.dev",
     author="Kaleb Barrett",
     author_email="dev.ktbarrett@gmail.com",
     description="Verification framework for cocotb",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/ktbarrett/cocotbext-ver",
+    url="https://github.com/ktbarrett/pyvert",
     project_urls={
-        "Bug Tracker": "https://github.com/ktbarrett/cocotbext-ver/issues",
+        "Bug Tracker": "https://github.com/ktbarrett/pyvert/issues",
     },
     classifiers=[
         "Programming Language :: Python :: 3",
