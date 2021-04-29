@@ -1,19 +1,27 @@
-from typing import Optional, Generic, TypeVar, Deque, Set
+from typing import Generic, TypeVar, Deque, Set, Optional
 from abc import ABC, abstractmethod
 from collections import deque
 from asyncio import QueueEmpty
+
 import cocotb
 from cocotb.triggers import Event
+from cocotb.decorators import RunningTask
+
+from .types import Record
+
+
+class Transaction(Record):
+    """
+    """
 
 
 class Process(ABC):
     """
     """
 
-    def __init__(self, name: Optional[str] = None):
-        for name, typ in self.__annotations__.items():
-            setattr(self, name, typ())
-        self._task = None
+    def __init__(self):
+        super().__init__()
+        self._task: Optional[RunningTask] = None
 
     def start(self) -> None:
         """
@@ -36,12 +44,16 @@ class Process(ABC):
         """
 
 
+QueueEmpty = QueueEmpty
+
+
 T = TypeVar('T')
 
 
 class Input(Generic[T]):
 
     def __init__(self):
+        super().__init__()
         self._deque: Deque[T] = deque()
         self._put_event = Event()
 
@@ -80,6 +92,7 @@ class Output(Generic[T]):
     """
 
     def __init__(self):
+        super().__init__()
         self._connections: Set[Input[T]] = set()
 
     def send(self, value: T) -> None:
