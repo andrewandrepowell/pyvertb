@@ -1,4 +1,4 @@
-from typing import Generic, TypeVar, Deque, Set, Optional
+from typing import Generic, TypeVar, Deque, Set, Optional, Iterator, Union
 from abc import ABC, abstractmethod
 from collections import deque
 from asyncio import QueueEmpty
@@ -45,52 +45,60 @@ QueueEmpty = QueueEmpty
 T = TypeVar("T")
 
 
-class Input(Generic[T]):
+class Sink(Generic[T]):
     """ """
-
-    def __init__(self):
-        super().__init__()
-        self._deque: Deque[T] = deque()
-        self._put_event = Event()
 
     def send(self, value: T) -> None:
         """ """
-        self._deque.append(value)
-        self._put_event.set()
 
-    def __bool__(self) -> bool:
-        return bool(self._deque)
+
+class Source(Generic[T]):
+    """ """
+
+    def available(self) -> bool:
+        """ """
 
     def recv_nowait(self) -> T:
         """ """
-        if self:
-            return self._deque.popleft()
-        raise QueueEmpty
 
     async def wait(self) -> None:
         """ """
-        while not self:
-            self._put_event.clear()
-            await self._put_event.wait()
 
     async def recv(self) -> T:
         """ """
-        await self.wait()
-        return self._deque.popleft()
+
+    def connect(self, inp: Sink[T]) -> None:
+        """ """
 
 
-class Output(Generic[T]):
+class Input(Sink[T]):
+    """ """
+
+    def available(self) -> bool:
+        """ """
+
+    def recv_nowait(self) -> T:
+        """ """
+
+    async def wait(self) -> None:
+        """ """
+
+    async def recv(self) -> T:
+        """ """
+
+
+class Output(Source[T]):
     """ """
 
     def __init__(self):
         super().__init__()
-        self._connections: Set[Input[T]] = set()
 
     def send(self, value: T) -> None:
         """ """
-        for c in self._connections:
-            c.send(value)
 
-    def connect(self, inp: Input[T]) -> None:
-        """ """
-        self._connections.add(inp)
+
+class Sequence(Source[T]):
+    """ """
+
+    def __init__(self, it: Iterator[T]):
+        super().__init__()
