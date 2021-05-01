@@ -1,23 +1,28 @@
-from typing import Generic, TypeVar
+from typing import Generic, TypeVar, Type
 
 from .process import Transaction, Process, Input
 from .synch import SynchDriver
 
 
-TransactionType = TypeVar('TransactionType', Transaction, covariant=True)
+InterfaceType = TypeVar("TransactionType", Transaction, covariant=True)
+TransactionType = TypeVar("TransactionType", Transaction, covariant=True)
 
 
-class Driver(Process, Generic[TransactionType]):
-    """
-    """
+class Driver(Process, Generic[InterfaceType, TransactionType]):
+    """ """
+
     input: Input[TransactionType]
+    interface: Type[InterfaceType]
 
 
-class BasicDriver(Driver[TransactionType]):
-    """
-    """
+class BasicDriver(Driver[InterfaceType, TransactionType]):
+    """ """
 
-    def __init__(self, synch_driver: SynchDriver[TransactionType]):
+    @property
+    def interface(self) -> InterfaceType:
+        return self._synch_driver.interface
+
+    def __init__(self, synch_driver: SynchDriver[InterfaceType, TransactionType]):
         super().__init__()
         self.input = Input()
         self._synch_driver = synch_driver
