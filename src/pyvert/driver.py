@@ -1,17 +1,18 @@
 from typing import Generic, TypeVar, Type
 
-from .process import Transaction, Process, Input
-from .synch import SynchDriver
+from pyvert.comm import Transaction, Process, Sink
+from pyvert.synch import SynchDriver
+from pyvert.interface import Interface
 
 
-InterfaceType = TypeVar("TransactionType", Transaction, covariant=True)
+InterfaceType = TypeVar("InterfaceType", Interface, covariant=True)
 TransactionType = TypeVar("TransactionType", Transaction, covariant=True)
 
 
 class Driver(Process, Generic[InterfaceType, TransactionType]):
     """ """
 
-    input: Input[TransactionType]
+    input: Sink[TransactionType]
     interface: Type[InterfaceType]
 
 
@@ -22,9 +23,13 @@ class BasicDriver(Driver[InterfaceType, TransactionType]):
     def interface(self) -> InterfaceType:
         return self._synch_driver.interface
 
-    def __init__(self, synch_driver: SynchDriver[InterfaceType, TransactionType]):
+    def __init__(
+        self,
+        input: Sink[TransactionType],
+        synch_driver: SynchDriver[InterfaceType, TransactionType],
+    ):
         super().__init__()
-        self.input = Input()
+        self.input = input
         self._synch_driver = synch_driver
 
     async def run(self):

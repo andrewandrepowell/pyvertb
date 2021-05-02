@@ -16,3 +16,13 @@ class Record(metaclass=_RecordMetaclass):
 
 
 field = field
+
+
+class MissingType:
+    """Type of singleton MISSING"""
+
+    def __repr__(self):
+        return "MISSING"
+
+
+MISSING = MissingType()

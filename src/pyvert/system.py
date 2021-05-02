@@ -1,22 +1,31 @@
 from typing import Set, Iterator
 
-from .process import Process
+from pyvert.comm import Process
 
 
 class System:
     """ """
 
     def __init__(self):
-        self._processes: Set[Process]
+        super().__init__()
+        self._processes: Set[Process] = set()
 
-    def register_process(self, p: Process) -> None:
+    def register_process(self, process: Process) -> None:
         """ """
-        self._processes.add(p)
+        self._processes.add(process)
 
-    def deregister_process(self, p: Process) -> None:
+    def deregister_process(self, process: Process) -> None:
         """ """
-        self._processes.remove(p)
+        self._processes.remove(process)
 
     def processes(self) -> Iterator[Process]:
         """ """
         return iter(self._processes)
+
+
+class Analysis(System):
+    """ """
+
+
+class Stimulus(System):
+    """ """
