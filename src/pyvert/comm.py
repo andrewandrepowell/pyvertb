@@ -16,7 +16,7 @@ from collections import deque
 from asyncio import QueueEmpty
 
 import pyvert.cocotb_compat as compat
-from pyvert.types import MISSING, MissingType
+from pyvert.util import MISSING, MissingType
 
 
 class Process(ABC):

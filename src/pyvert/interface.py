@@ -1,4 +1,4 @@
-from .types import Record
+from pyvert.types import Record
 
 
 class Interface(Record):

@@ -1,7 +1,7 @@
 from typing import Generic, TypeVar, Type
 from abc import ABC
 
-from .process import Transaction
+from pyvert.comm import Transaction
 
 
 InterfaceType = TypeVar("TransactionType", Transaction, covariant=True)

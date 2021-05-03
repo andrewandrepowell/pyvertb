@@ -1,6 +1,6 @@
 from typing import Any
 
-from pyvert.types import Record
+from pyvert.util import Record
 
 
 class Transaction(Record):
