@@ -126,10 +126,14 @@ def aiter(aiterable: AsyncIterable[T]) -> AsyncIterator[T]:
     return aiterable.__aiter__()
 
 
+async def anext(aiterator: AsyncIterator[T]) -> T:
+    return await aiterator.__anext__()
+
+
 async def azip(*aiterables: AsyncIterable[T]) -> List[T]:
     aiterators = [aiter(ait) for ait in aiterables]
     while True:
-        yield [await ait for ait in aiterators]
+        yield [anext(ait) for ait in aiterators]
 
 
 async def select(*awaitables: Awaitable[T]) -> int:
