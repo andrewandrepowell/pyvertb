@@ -1,12 +1,19 @@
+from typing import TypeVar, Optional
 from dataclasses import dataclass, field
+import sys
 
 
-__all__ = (
-    "Record",
-    "field",
-    "MissingType",
-    "MISSING"
-)
+T = TypeVar('T')
+
+
+def public(api: T, name: Optional[str] = None) -> T:
+    if name is None:
+        name = api.__name__
+    sys.modules[api.__module__].__all__.append(name)
+    return api
+
+
+public(public)
 
 
 class _RecordMetaclass(type):
@@ -16,6 +23,7 @@ class _RecordMetaclass(type):
         return dataclass(unsafe_hash=True, frozen=True)(cls)
 
 
+@public
 class Record(metaclass=_RecordMetaclass):
     """
     Base class for record types
@@ -25,6 +33,10 @@ class Record(metaclass=_RecordMetaclass):
     """
 
 
+field = public(field, 'field')
+
+
+@public
 class MissingType:
     """Type of singleton MISSING"""
 
@@ -32,5 +44,5 @@ class MissingType:
         return "MISSING"
 
 
-MISSING = MissingType()
+MISSING = public(MissingType(), 'MISSING')
 """Use in place :value:`None` as an invalid value where :value:`None` is a valid value"""
