@@ -5,7 +5,6 @@ from pyvert.comm import Process, Input, Output, QueueEmpty
 
 @cocotb.test()
 async def test_comm(_):
-
     class MyProcess(Process):
         a: Input[str]
         b: Output[int]

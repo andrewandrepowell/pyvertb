@@ -1,11 +1,15 @@
+from typing import Union
 import setuptools
 import pathlib
+import os
 
 
-def get_version(version_file):
+def get_version(
+    version_file: Union[str, os.PathLike], version_var: str = "__version__"
+):
     locls = {}
     exec(open(version_file).read(), {}, locls)
-    return locls["__version__"]
+    return locls[version_var]
 
 
 here = pathlib.Path(__file__).parent.resolve()
