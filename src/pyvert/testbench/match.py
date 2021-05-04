@@ -1,12 +1,9 @@
 from typing import TypeVar, Generic, Set
 import operator
 
-from pyvert.comm import Transaction, Process, Source
+from pyvert.comm import Transaction, Source
+from pyvert.testbench import Scorer, Scoreboard
 import pyvert.cocotb_compat as compat
-
-
-class Scorer(Process):
-    """ """
 
 
 TransactionType = TypeVar("TransactionType", Transaction, covariant=True)
@@ -23,6 +20,7 @@ class Matcher(Scorer, Generic[TransactionType]):
     match_event: compat.Event
 
     match = operator.eq
+    """ """
 
 
 class OrderedMatcher(Matcher[TransactionType]):
@@ -93,3 +91,14 @@ class UnorderedMatcher(Matcher[TransactionType]):
             self._actual_queue -= common
             self._expected_queue -= common
             self.match_event.set()
+
+
+class MatchScoreboard(Scoreboard):
+    """ """
+
+    def is_passing(self) -> bool:
+        return all(scorer.mismatched == 0 for scorer in self.scorers())
+
+    async def run(self):
+        # we don't need to do any aggregation here
+        pass

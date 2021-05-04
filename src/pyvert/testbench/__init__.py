@@ -1,7 +1,22 @@
 from typing import Set, Iterator
 
-from pyvert.comm import Process
-from pyvert.scorer import Scorer
+from pyvert.comm import Process, System
+
+
+class Analysis(System):
+    """ """
+
+
+class Stimulus(System):
+    """ """
+
+
+class Scorer(Process):
+    """ """
+
+
+class Model(Process):
+    """ """
 
 
 class Scoreboard(Process):
@@ -22,14 +37,3 @@ class Scoreboard(Process):
     def scorers(self) -> Iterator[Scorer]:
         """ """
         return iter(self._scorers)
-
-
-class MatchScoreboard(Scoreboard):
-    """ """
-
-    def is_passing(self) -> bool:
-        return all(scorer.mismatched == 0 for scorer in self.scorers())
-
-    async def run(self):
-        # we don't need to do any aggregation here
-        pass
