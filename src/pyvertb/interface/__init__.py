@@ -1,15 +1,15 @@
 from typing import Generic, TypeVar, Type
 from abc import abstractmethod
-from pyvertb.comm import Transaction, Process, Input, Output
-from pyvertb.types import Record
+from pyvertb.communication import Transaction, Process, Input, Output
+from pyvertb.util import Record
 
 
 class Interface(Record):
     """ """
 
 
-InterfaceType = TypeVar("InterfaceType", Interface, covariant=True)
-TransactionType = TypeVar("TransactionType", Transaction, covariant=True)
+InterfaceType = TypeVar("InterfaceType", bound=Interface)
+TransactionType = TypeVar("TransactionType", bound=Transaction)
 
 
 class SynchDriver(Generic[InterfaceType, TransactionType]):
@@ -22,7 +22,7 @@ class SynchDriver(Generic[InterfaceType, TransactionType]):
         """ """
 
 
-class SynchMonitor(Generic[TransactionType]):
+class SynchMonitor(Generic[InterfaceType, TransactionType]):
     """ """
 
     interface: Type[InterfaceType]

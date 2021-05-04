@@ -2,5 +2,5 @@
 Component Communication
 =======================
 
-.. automodule:: pyvertb.comm
+.. automodule:: pyvertb.communication
     :members:

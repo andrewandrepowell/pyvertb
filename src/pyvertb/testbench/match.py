@@ -1,12 +1,12 @@
 from typing import TypeVar, Generic, Set
 import operator
 
-from pyvertb.comm import Transaction, Source
+from pyvertb.communication import Transaction, Source
 from pyvertb.testbench import Scorer, Scoreboard
 import pyvertb.cocotb_compat as compat
 
 
-TransactionType = TypeVar("TransactionType", Transaction, covariant=True)
+TransactionType = TypeVar("TransactionType", bound=Transaction)
 
 
 class Matcher(Scorer, Generic[TransactionType]):
