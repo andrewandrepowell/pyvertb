@@ -1,6 +1,6 @@
 from typing import Set, Iterator
 
-from pyvert.comm import Process, System
+from pyvertb.comm import Process, System
 
 
 class Analysis(System):

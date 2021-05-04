@@ -14,19 +14,19 @@
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
 
-import pyvert.version as pyvert_version
+import pyvertb.version as pyvertb_version
 
 # -- Project information -----------------------------------------------------
 
-project = "pyvert"
+project = "pyvertb"
 copyright = "2021, Kaleb Barrett"
 author = "Kaleb Barrett"
 
 # The short X.Y version
-version = f"{pyvert_version.major}.{pyvert_version.minor}"
+version = f"{pyvertb_version.major}.{pyvertb_version.minor}"
 
 # The full version, including alpha/beta/rc tags
-release = pyvert_version.__version__
+release = pyvertb_version.__version__
 
 
 # -- General configuration ---------------------------------------------------

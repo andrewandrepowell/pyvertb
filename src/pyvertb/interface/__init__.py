@@ -1,7 +1,7 @@
 from typing import Generic, TypeVar, Type
 from abc import abstractmethod
-from pyvert.comm import Transaction, Process, Input, Output
-from pyvert.types import Record
+from pyvertb.comm import Transaction, Process, Input, Output
+from pyvertb.types import Record
 
 
 class Interface(Record):

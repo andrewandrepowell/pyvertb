@@ -14,19 +14,19 @@ def get_version(
 
 here = pathlib.Path(__file__).parent.resolve()
 readme_file = here / "README.md"
-version_file = here / "src" / "pyvert" / "version.py"
+version_file = here / "src" / "pyvertb" / "version.py"
 
 setuptools.setup(
-    name="pyvert",
+    name="pyvertb",
     version=get_version(version_file),
     author="Kaleb Barrett",
     author_email="dev.ktbarrett@gmail.com",
     description="Verification framework for cocotb",
     long_description=readme_file.read_text(encoding="utf-8"),
     long_description_content_type="text/markdown",
-    url="https://github.com/ktbarrett/pyvert",
+    url="https://github.com/ktbarrett/pyvertb",
     project_urls={
-        "Bug Tracker": "https://github.com/ktbarrett/pyvert/issues",
+        "Bug Tracker": "https://github.com/ktbarrett/pyvertb/issues",
     },
     classifiers=[
         "Programming Language :: Python :: 3",

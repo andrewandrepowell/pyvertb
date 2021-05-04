@@ -1,9 +1,9 @@
 from typing import TypeVar, Generic, Set
 import operator
 
-from pyvert.comm import Transaction, Source
-from pyvert.testbench import Scorer, Scoreboard
-import pyvert.cocotb_compat as compat
+from pyvertb.comm import Transaction, Source
+from pyvertb.testbench import Scorer, Scoreboard
+import pyvertb.cocotb_compat as compat
 
 
 TransactionType = TypeVar("TransactionType", Transaction, covariant=True)

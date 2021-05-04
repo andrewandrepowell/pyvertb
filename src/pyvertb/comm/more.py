@@ -1,9 +1,9 @@
 from typing import Iterator, Union, TypeVar, Type, MutableSet, MutableSequence
 from asyncio import QueueEmpty
 
-from pyvert.comm import Source, Sink
-from pyvert.util import MISSING, MissingType
-import pyvert.cocotb_compat as compat
+from pyvertb.comm import Source, Sink
+from pyvertb.util import MISSING, MissingType
+import pyvertb.cocotb_compat as compat
 
 
 T_co = TypeVar("T_co", covariant=True)

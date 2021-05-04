@@ -1,9 +1,9 @@
-.. pyvert documentation master file, created by
+.. pyvertb documentation master file, created by
    sphinx-quickstart on Tue May  4 09:40:28 2021.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to pyvert's documentation!
+Welcome to pyvertb's documentation!
 ==================================
 
 .. toctree::

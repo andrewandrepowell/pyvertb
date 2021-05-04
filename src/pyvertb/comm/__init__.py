@@ -12,8 +12,8 @@ from abc import ABC, abstractmethod
 from collections import deque
 from asyncio import QueueEmpty
 
-import pyvert.cocotb_compat as compat
-from pyvert.util import Record
+import pyvertb.cocotb_compat as compat
+from pyvertb.util import Record
 
 
 class Transaction(Record):
