@@ -28,4 +28,4 @@ class MissingType:
 
 
 MISSING = MissingType()
-"""Use in place :value:`None` as an invalid value where :value:`None` is a valid value"""
+"""Use in place :value:`None` as an invalid value when :value:`None` is a valid value"""
