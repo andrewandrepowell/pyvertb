@@ -29,7 +29,7 @@ class Transaction(Record):
     """
 
 
-class Process(ABC):
+class Component(ABC):
     """ """
 
     def __init__(self):
@@ -185,21 +185,21 @@ def connect(source: Output[T_co], sink: Input[T_co]) -> None:
     sink.connect(c)
 
 
-class System:
+class Environment:
     """ """
 
     def __init__(self):
         super().__init__()
-        self._processes: Set[Process] = set()
+        self._processes: Set[Component] = set()
 
-    def register_process(self, process: Process) -> None:
+    def register_process(self, process: Component) -> None:
         """ """
         self._processes.add(process)
 
-    def deregister_process(self, process: Process) -> None:
+    def deregister_process(self, process: Component) -> None:
         """ """
         self._processes.remove(process)
 
-    def processes(self) -> Iterator[Process]:
+    def processes(self) -> Iterator[Component]:
         """ """
         return iter(self._processes)

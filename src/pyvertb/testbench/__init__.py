@@ -1,25 +1,25 @@
 from typing import Set, Iterator
 
-from pyvertb.communication import Process, System
+from pyvertb.communication import Component, Environment
 
 
-class Analysis(System):
+class Analyzer(Environment):
     """ """
 
 
-class Stimulus(System):
+class Stimulater(Environment):
     """ """
 
 
-class Scorer(Process):
+class Scorer(Component):
     """ """
 
 
-class Model(Process):
+class Model(Component):
     """ """
 
 
-class Scoreboard(Process):
+class Scoreboard(Component):
     """ """
 
     def __init__(self):

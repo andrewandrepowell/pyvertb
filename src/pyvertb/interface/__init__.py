@@ -1,6 +1,6 @@
 from typing import Generic, TypeVar, Type
 from abc import abstractmethod
-from pyvertb.communication import Transaction, Process, Input, Output
+from pyvertb.communication import Transaction, Component, Input, Output
 from pyvertb.util import Record
 
 
@@ -32,7 +32,7 @@ class SynchMonitor(Generic[InterfaceType, TransactionType]):
         """ """
 
 
-class Driver(Process, Generic[InterfaceType, TransactionType]):
+class Driver(Component, Generic[InterfaceType, TransactionType]):
     """ """
 
     input: Input[TransactionType]
@@ -59,7 +59,7 @@ class BasicDriver(Driver[InterfaceType, TransactionType]):
             self._synch_driver.drive(trans)
 
 
-class Monitor(Process, Generic[InterfaceType, TransactionType]):
+class Monitor(Component, Generic[InterfaceType, TransactionType]):
     """ """
 
     output: Output[TransactionType]
