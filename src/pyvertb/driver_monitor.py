@@ -1,45 +1,11 @@
-from typing import Generic, TypeVar, Type
-from abc import abstractmethod
-from pyvertb.communication import Transaction, Component, Input, Output
-from pyvertb.util import Record
-
-
-class Interface(Record):
-    """ """
+from typing import TypeVar
+from pyvertb import SynchDriver, SynchMonitor, Driver, Monitor, Interface, Transaction
 
 
 InterfaceType = TypeVar("InterfaceType", bound=Interface)
 TransactionType = TypeVar("TransactionType", bound=Transaction)
 InTransactionType = TypeVar("TransactionType", bound=Transaction)
 OutTransactionType = TypeVar("TransactionType", bound=Transaction)
-
-
-class SynchDriver(Generic[InterfaceType, InTransactionType, OutTransactionType]):
-    """ """
-
-    interface: Type[InterfaceType]
-
-    @abstractmethod
-    def drive(self, trans: InTransactionType) -> OutTransactionType:
-        """ """
-
-
-class SynchMonitor(Generic[InterfaceType, TransactionType]):
-    """ """
-
-    interface: Type[InterfaceType]
-
-    @abstractmethod
-    def monitor(self) -> TransactionType:
-        """ """
-
-
-class Driver(Component, Generic[InterfaceType, InTransactionType, OutTransactionType]):
-    """ """
-
-    input: Input[InTransactionType]
-    output: Output[OutTransactionType]
-    interface: Type[InterfaceType]
 
 
 class BasicDriver(Driver[InterfaceType, InTransactionType, OutTransactionType]):
@@ -60,13 +26,6 @@ class BasicDriver(Driver[InterfaceType, InTransactionType, OutTransactionType]):
         while True:
             trans = await self.input.recv()
             self._synch_driver.drive(trans)
-
-
-class Monitor(Component, Generic[InterfaceType, TransactionType]):
-    """ """
-
-    output: Output[TransactionType]
-    interface: InterfaceType
 
 
 class BasicMonitor(Monitor[InterfaceType, TransactionType]):

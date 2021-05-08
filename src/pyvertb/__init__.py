@@ -7,6 +7,7 @@ from typing import (
     Deque,
     AsyncIterator,
     Set,
+    Type,
 )
 from abc import ABC, abstractmethod
 from collections import deque
@@ -16,17 +17,11 @@ import pyvertb.cocotb_compat as compat
 from pyvertb.util import Record
 
 
+T_co = TypeVar("T_co", covariant=True)
+
+
 class Transaction(Record):
-    """
-    Base class for a Transaction types.
-
-    Transactions represents an atomic change in state in a system.
-
-
-    Usage:
-    .. code-block:: python3
-
-    """
+    """ """
 
 
 class Component(ABC):
@@ -52,9 +47,6 @@ class Component(ABC):
     @abstractmethod
     async def run(self) -> None:
         """ """
-
-
-T_co = TypeVar("T_co", covariant=True)
 
 
 class Source(AsyncIterator[T_co]):
@@ -95,62 +87,6 @@ class Sink(Generic[T_co]):
         """ """
 
 
-class Input(Source[T_co]):
-    """ """
-
-    def __init__(self, source: Optional[Source[T_co]] = None):
-        self._source = source
-
-    def connect(self, source: Source[T_co]) -> None:
-        if self._source is not None:
-            raise ConnectionError("Already connected")
-        self._source = source
-
-    def disconnect(self) -> Source[T_co]:
-        if self._source is None:
-            raise ConnectionError("Never connected")
-        res, self._source = self._source, None
-        return res
-
-    def is_available(self):
-        if self._source is None:
-            raise ConnectionError("Never connected")
-        return self._source.is_available()
-
-    async def available(self):
-        if self._source is None:
-            raise ConnectionError("Never connected")
-        await self._source.available()
-
-    def recv_nowait(self):
-        if self._source is None:
-            raise ConnectionError("Never connected")
-        return self._source.recv_nowait()
-
-
-class Output(Sink[T_co]):
-    """ """
-
-    def __init__(self, sink: Optional[Sink[T_co]] = None):
-        self._sink = sink
-
-    def connect(self, sink: Sink[T_co]) -> None:
-        if self._sink is not None:
-            raise ConnectionError("Already connected")
-        self._sink = sink
-
-    def disconnect(self) -> Sink[T_co]:
-        if self._sink is None:
-            raise ConnectionError("Never connected")
-        res, self._sink = self._sink, None
-        return res
-
-    def send(self, value):
-        if self._sink is None:
-            raise ConnectionError("Never connected")
-        self._source.send(value)
-
-
 class Channel(Sink[T_co], Source[T_co]):
     """ """
 
@@ -178,13 +114,6 @@ class Channel(Sink[T_co], Source[T_co]):
             raise QueueEmpty from None
 
 
-def connect(source: Output[T_co], sink: Input[T_co]) -> None:
-    """ """
-    c = Channel[T_co]()
-    source.connect(c)
-    sink.connect(c)
-
-
 class Environment:
     """ """
 
@@ -203,3 +132,84 @@ class Environment:
     def processes(self) -> Iterator[Component]:
         """ """
         return iter(self._processes)
+
+
+class Interface(Record):
+    """ """
+
+
+InterfaceType = TypeVar("InterfaceType", bound=Interface)
+TransactionType = TypeVar("TransactionType", bound=Transaction)
+InTransactionType = TypeVar("TransactionType", bound=Transaction)
+OutTransactionType = TypeVar("TransactionType", bound=Transaction)
+
+
+class SynchDriver(Generic[InterfaceType, InTransactionType, OutTransactionType]):
+    """ """
+
+    interface: Type[InterfaceType]
+
+    @abstractmethod
+    def drive(self, trans: InTransactionType) -> OutTransactionType:
+        """ """
+
+
+class SynchMonitor(Generic[InterfaceType, TransactionType]):
+    """ """
+
+    interface: Type[InterfaceType]
+
+    @abstractmethod
+    def monitor(self) -> TransactionType:
+        """ """
+
+
+class Driver(Component, Generic[InterfaceType, InTransactionType, OutTransactionType]):
+    """ """
+
+    input: Source[InTransactionType]
+    output: Sink[OutTransactionType]
+    interface: Type[InterfaceType]
+
+
+class Monitor(Component, Generic[InterfaceType, TransactionType]):
+    """ """
+
+    output: Sink[TransactionType]
+    interface: InterfaceType
+
+
+class Model(Component):
+    """ """
+
+
+class Scorer(Component):
+    """ """
+
+
+class Scoreboard(Component):
+    """ """
+
+    def __init__(self):
+        super().__init__()
+        self._scorers: Set[Scorer] = set()
+
+    def register_scorer(self, scorer: Scorer) -> None:
+        """ """
+        self._scorers.add(scorer)
+
+    def deregister_scorer(self, scorer: Scorer) -> None:
+        """ """
+        self._scorers.remove(scorer)
+
+    def scorers(self) -> Iterator[Scorer]:
+        """ """
+        return iter(self._scorers)
+
+
+class Analyzer(Environment):
+    """ """
+
+
+class Stimulater(Environment):
+    """ """

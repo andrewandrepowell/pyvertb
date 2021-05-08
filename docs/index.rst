@@ -4,15 +4,14 @@
    contain the root `toctree` directive.
 
 Welcome to pyvertb's documentation!
-==================================
+===================================
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
-   communication
-   interface
-   testbench
+   concepts
+   reference
 
 
 Indices and tables
