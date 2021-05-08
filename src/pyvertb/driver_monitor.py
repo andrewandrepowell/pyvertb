@@ -4,15 +4,15 @@ from pyvertb import SynchDriver, SynchMonitor, Driver, Monitor, Interface, Trans
 
 InterfaceType = TypeVar("InterfaceType", bound=Interface)
 TransactionType = TypeVar("TransactionType", bound=Transaction)
-InTransactionType = TypeVar("TransactionType", bound=Transaction)
-OutTransactionType = TypeVar("TransactionType", bound=Transaction)
+InTransactionType = TypeVar("InTransactionType", bound=Transaction)
+OutTransactionType = TypeVar("OutTransactionType", bound=Transaction)
 
 
 class BasicDriver(Driver[InterfaceType, InTransactionType, OutTransactionType]):
     """ """
 
     @property
-    def interface(self) -> InterfaceType:
+    def interface(self):
         return self._synch_driver.interface
 
     def __init__(
@@ -32,7 +32,7 @@ class BasicMonitor(Monitor[InterfaceType, TransactionType]):
     """ """
 
     @property
-    def interface(self) -> InterfaceType:
+    def interface(self):
         return self._synch_monitor.interface
 
     def __init__(

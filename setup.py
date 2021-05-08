@@ -35,6 +35,7 @@ setuptools.setup(
     ],
     package_dir={"": "src"},
     packages=setuptools.find_namespace_packages(where="src"),
+    package_data={"pyvertb": ["py.typed"]},
     python_requires=">=3.6",
     install_requires=["cocotb>=1.5"],
 )

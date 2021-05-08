@@ -1,8 +1,7 @@
-from typing import TypeVar, Generic, Set
+from typing import TypeVar, Generic, Set, Any
 import operator
 
-from pyvertb.communication import Transaction, Source
-from pyvertb.testbench import Scorer, Scoreboard
+from pyvertb import Transaction, Source, Scorer, Scoreboard
 import pyvertb.cocotb_compat as compat
 
 
@@ -93,7 +92,7 @@ class UnorderedMatcher(Matcher[TransactionType]):
             self.match_event.set()
 
 
-class MatchScoreboard(Scoreboard):
+class MatchScoreboard(Scoreboard[Matcher[Any]]):
     """ """
 
     def is_passing(self) -> bool:

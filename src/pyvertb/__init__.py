@@ -3,7 +3,6 @@ from typing import (
     TypeVar,
     Optional,
     Iterator,
-    Iterable,
     Deque,
     AsyncIterator,
     Set,
@@ -17,7 +16,7 @@ import pyvertb.cocotb_compat as compat
 from pyvertb.util import Record
 
 
-T_co = TypeVar("T_co", covariant=True)
+T = TypeVar("T")
 
 
 class Transaction(Record):
@@ -49,7 +48,7 @@ class Component(ABC):
         """ """
 
 
-class Source(AsyncIterator[T_co]):
+class Source(AsyncIterator[T]):
     """ """
 
     @abstractmethod
@@ -64,35 +63,35 @@ class Source(AsyncIterator[T_co]):
         """ """
 
     @abstractmethod
-    def recv_nowait(self) -> T_co:
+    def recv_nowait(self) -> T:
         """ """
 
-    async def recv(self) -> T_co:
+    async def recv(self) -> T:
         """ """
         await self.available()
         return self.recv_nowait()
 
-    def __aiter__(self) -> AsyncIterator[T_co]:
+    def __aiter__(self) -> AsyncIterator[T]:
         return self
 
-    async def __anext__(self) -> T_co:
+    async def __anext__(self) -> T:
         return await self.recv()
 
 
-class Sink(Generic[T_co]):
+class Sink(Generic[T]):
     """ """
 
     @abstractmethod
-    def send(self, value: T_co) -> None:
+    def send(self, value: T) -> None:
         """ """
 
 
-class Channel(Sink[T_co], Source[T_co]):
+class Channel(Sink[T], Source[T]):
     """ """
 
-    def __init__(self, init: Optional[Iterable[T_co]] = None):
+    def __init__(self):
         super().__init__()
-        self._deque: Deque[T_co] = deque(init)
+        self._deque: Deque[T] = deque()
         self._send_event = compat.Event()
 
     def send(self, value):
@@ -140,8 +139,8 @@ class Interface(Record):
 
 InterfaceType = TypeVar("InterfaceType", bound=Interface)
 TransactionType = TypeVar("TransactionType", bound=Transaction)
-InTransactionType = TypeVar("TransactionType", bound=Transaction)
-OutTransactionType = TypeVar("TransactionType", bound=Transaction)
+InTransactionType = TypeVar("InTransactionType", bound=Transaction)
+OutTransactionType = TypeVar("OutTransactionType", bound=Transaction)
 
 
 class SynchDriver(Generic[InterfaceType, InTransactionType, OutTransactionType]):
@@ -187,22 +186,25 @@ class Scorer(Component):
     """ """
 
 
-class Scoreboard(Component):
+ScorerType = TypeVar("ScorerType")
+
+
+class Scoreboard(Component, Generic[ScorerType]):
     """ """
 
     def __init__(self):
         super().__init__()
-        self._scorers: Set[Scorer] = set()
+        self._scorers: Set[ScorerType] = set()
 
-    def register_scorer(self, scorer: Scorer) -> None:
+    def register_scorer(self, scorer: ScorerType) -> None:
         """ """
         self._scorers.add(scorer)
 
-    def deregister_scorer(self, scorer: Scorer) -> None:
+    def deregister_scorer(self, scorer: ScorerType) -> None:
         """ """
         self._scorers.remove(scorer)
 
-    def scorers(self) -> Iterator[Scorer]:
+    def scorers(self) -> Iterator[ScorerType]:
         """ """
         return iter(self._scorers)
 

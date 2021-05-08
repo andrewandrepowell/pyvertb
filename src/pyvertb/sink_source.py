@@ -1,20 +1,20 @@
 from typing import Iterator, Union, TypeVar, Type, MutableSet, MutableSequence
 from asyncio import QueueEmpty
 
-from pyvertb.comm import Source, Sink
+from pyvertb import Source, Sink
 from pyvertb.util import MISSING, MissingType
 import pyvertb.cocotb_compat as compat
 
 
-T_co = TypeVar("T_co", covariant=True)
+T = TypeVar("T")
 
 
-class IteratorSource(Source[T_co]):
+class IteratorSource(Source[T]):
     """ """
 
-    def __init__(self, it: Iterator[T_co]):
+    def __init__(self, it: Iterator[T]):
         self._it = it
-        self._lookahead: Union[MissingType, T_co] = MISSING
+        self._lookahead: Union[MissingType, T] = MISSING
 
     def is_available(self) -> bool:
         if self._lookahead is not MISSING:
@@ -40,27 +40,27 @@ class IteratorSource(Source[T_co]):
             raise QueueEmpty from None
 
 
-class SequenceSink(Sink[T_co]):
+class SequenceSink(Sink[T]):
     """ """
 
-    def __init__(self, cls: Type[MutableSequence[T_co]]):
+    def __init__(self, cls: Type[MutableSequence[T]]):
         self.value = cls()
 
     def send(self, value):
         self.value.append(value)
 
 
-class SetSink(Sink[T_co]):
+class SetSink(Sink[T]):
     """ """
 
-    def __init__(self, cls: Type[MutableSet[T_co]]):
+    def __init__(self, cls: Type[MutableSet[T]]):
         self.value = cls()
 
     def send(self, value):
         self.value.add(value)
 
 
-class NullSink(Sink[T_co]):
+class NullSink(Sink[T]):
     """ """
 
     def send(self, value):

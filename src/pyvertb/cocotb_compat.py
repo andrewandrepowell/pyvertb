@@ -6,6 +6,7 @@ from typing import (
     AsyncIterator,
     List,
     Awaitable,
+    Tuple,
 )
 
 from asyncio import CancelledError, InvalidStateError
@@ -130,14 +131,14 @@ async def anext(aiterator: AsyncIterator[T]) -> T:
     return await aiterator.__anext__()
 
 
-async def azip(*aiterables: AsyncIterable[T]) -> List[T]:
+async def azip(*aiterables: AsyncIterable[T]) -> AsyncIterable[List[T]]:
     aiterators = [aiter(ait) for ait in aiterables]
     while True:
-        yield [anext(ait) for ait in aiterators]
+        yield [await anext(ait) for ait in aiterators]
 
 
-async def select(*awaitables: Awaitable[T]) -> int:
-    async def waiter(idx: int, awaitable: Awaitable) -> T:
+async def select(*awaitables: Awaitable[T]) -> Tuple[int, T]:
+    async def waiter(idx: int, awaitable: Awaitable) -> Tuple[int, T]:
         return idx, await awaitable
 
     wait_tasks = [fork(waiter(i, aw)) for i, aw in enumerate(awaitables)]
