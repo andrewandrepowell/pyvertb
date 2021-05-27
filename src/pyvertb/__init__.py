@@ -7,6 +7,7 @@ from typing import (
     AsyncIterator,
     Set,
     Type,
+    Tuple,
 )
 from abc import ABC, abstractmethod
 from collections import deque
@@ -19,15 +20,19 @@ from pyvertb.util import Record
 T = TypeVar("T")
 
 
-class Transaction(Record):
-    """
-    Base class for transaction types.
-
-    Transactions are
-    """
-
-
 class Component(ABC):
+    """ """
+
+    @abstractmethod
+    def start(self) -> None:
+        """ """
+
+    @abstractmethod
+    def stop(self) -> None:
+        """ """
+
+
+class Process(Component):
     """ """
 
     def __init__(self):
@@ -50,6 +55,23 @@ class Component(ABC):
     @abstractmethod
     async def run(self) -> None:
         """ """
+
+
+class Module(Component):
+    """ """
+
+    def sub_components(self) -> Iterator[Tuple[str, Component]]:
+        for name, obj in dir(self).items():
+            if isinstance(obj, Component):
+                yield name, obj
+
+    def start(self) -> None:
+        for _, c in self.sub_components():
+            c.start()
+
+    def stop(self) -> None:
+        for _, c in self.sub_components():
+            c.stop()
 
 
 class Source(AsyncIterator[T]):
@@ -117,28 +139,24 @@ class Channel(Sink[T], Source[T]):
             raise QueueEmpty from None
 
 
-class Environment:
-    """ """
-
-    def __init__(self):
-        super().__init__()
-        self._processes: Set[Component] = set()
-
-    def register_process(self, process: Component) -> None:
-        """ """
-        self._processes.add(process)
-
-    def deregister_process(self, process: Component) -> None:
-        """ """
-        self._processes.remove(process)
-
-    def processes(self) -> Iterator[Component]:
-        """ """
-        return iter(self._processes)
-
-
 class Interface(Record):
     """ """
+
+
+class Transaction(Record):
+    """
+    Base class for all transaction types.
+
+    Transactions represent a single occurence of an observable "event".
+    Transactions can represent anything; including, but not limited to:
+    * An AXI Stream, List, or Full Transaction
+    * An interrupt occuring
+    * A change in state
+
+    Transactions don't necessarily have to have associated data, but many do.
+    For example, a transaction for an interupt occuring typically won't have
+    associated data; but an AXI Full Transaction will contain a lot of data.
+    """
 
 
 InterfaceType = TypeVar("InterfaceType", bound=Interface)
@@ -147,27 +165,32 @@ InTransactionType = TypeVar("InTransactionType", bound=Transaction)
 OutTransactionType = TypeVar("OutTransactionType", bound=Transaction)
 
 
-class SynchDriver(Generic[InterfaceType, InTransactionType, OutTransactionType]):
+class SynchDriver(
+    Component, Generic[InterfaceType, InTransactionType, OutTransactionType]
+):
     """ """
 
-    interface: Type[InterfaceType]
+    interface: InterfaceType
+    in_transaction_type: Type[InTransactionType]
+    out_transaction_type: Type[OutTransactionType]
 
     @abstractmethod
     def drive(self, trans: InTransactionType) -> OutTransactionType:
         """ """
 
 
-class SynchMonitor(Generic[InterfaceType, TransactionType]):
+class SynchMonitor(Component, Generic[InterfaceType, TransactionType]):
     """ """
 
-    interface: Type[InterfaceType]
+    interface: InterfaceType
+    transaction_type: Type[TransactionType]
 
     @abstractmethod
     def monitor(self) -> TransactionType:
         """ """
 
 
-class Driver(Component, Generic[InterfaceType, InTransactionType, OutTransactionType]):
+class Driver(Process, Generic[InterfaceType, InTransactionType, OutTransactionType]):
     """ """
 
     input: Source[InTransactionType]
@@ -175,18 +198,18 @@ class Driver(Component, Generic[InterfaceType, InTransactionType, OutTransaction
     interface: Type[InterfaceType]
 
 
-class Monitor(Component, Generic[InterfaceType, TransactionType]):
+class Monitor(Process, Generic[InterfaceType, TransactionType]):
     """ """
 
     output: Sink[TransactionType]
     interface: InterfaceType
 
 
-class Model(Component):
+class Model(Process):
     """ """
 
 
-class Scorer(Component):
+class Scorer(Process):
     """ """
 
 
@@ -213,9 +236,9 @@ class Scoreboard(Component, Generic[ScorerType]):
         return iter(self._scorers)
 
 
-class Analyzer(Environment):
+class Analyzer(Module):
     """ """
 
 
-class Stimulater(Environment):
+class Stimulater(Module):
     """ """
