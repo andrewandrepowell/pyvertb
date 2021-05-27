@@ -7,6 +7,7 @@ from typing import (
     List,
     Awaitable,
     Tuple,
+    Union,
 )
 
 from asyncio import CancelledError, InvalidStateError
@@ -23,12 +24,16 @@ from cocotb.handle import (
     RealObject,
 )
 from cocotb import fork
+from cocotb.binary import BinaryValue
 from cocotb.triggers import PythonTrigger, Event, First
 from cocotb.decorators import RunningTask
 import cocotb.outcomes
 
 
 T = TypeVar("T")
+
+
+LogicArrayValueType = Union[int, BinaryValue]
 
 
 Object = SimHandleBase
@@ -43,11 +48,11 @@ ScopeArray = HierarchyArrayObject
 """
 """
 
-Logic = ModifiableObject
+LogicSignalType = ModifiableObject
 """
 """
 
-Array = NonHierarchyIndexableObject
+LogicArraySignalType = NonHierarchyIndexableObject
 """
 """
 

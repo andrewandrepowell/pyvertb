@@ -20,7 +20,11 @@ T = TypeVar("T")
 
 
 class Transaction(Record):
-    """ """
+    """
+    Base class for transaction types.
+
+    Transactions are
+    """
 
 
 class Component(ABC):
