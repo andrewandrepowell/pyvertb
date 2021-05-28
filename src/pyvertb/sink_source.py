@@ -43,7 +43,7 @@ class IteratorSource(Source[T]):
 class SequenceSink(Sink[T]):
     """ """
 
-    def __init__(self, cls: Type[MutableSequence[T]]):
+    def __init__(self, cls: Type[MutableSequence[T]] = list):
         self.value = cls()
 
     def send(self, value):
@@ -53,7 +53,7 @@ class SequenceSink(Sink[T]):
 class SetSink(Sink[T]):
     """ """
 
-    def __init__(self, cls: Type[MutableSet[T]]):
+    def __init__(self, cls: Type[MutableSet[T]] = set):
         self.value = cls()
 
     def send(self, value):

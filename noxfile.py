@@ -1,7 +1,7 @@
 import nox
 
 
-@nox.session
+@nox.session(reuse_venv=True)
 def docs(session):
     # docs dependencies
     session.install("sphinx", "sphinx-rtd-theme")
