@@ -1,10 +1,9 @@
-from typing import Iterator, Union, TypeVar, Type, MutableSet, MutableSequence
 from asyncio import QueueEmpty
+from typing import Iterator, TypeVar, Union
 
-from pyvertb import Source, Sink
-from pyvertb.util import MISSING, MissingType
 import pyvertb.cocotb_compat as compat
-
+from pyvertb import Source
+from pyvertb.util import MISSING, MissingType
 
 T = TypeVar("T")
 
@@ -38,30 +37,3 @@ class IteratorSource(Source[T]):
             return next(self._it)
         except StopIteration:
             raise QueueEmpty from None
-
-
-class SequenceSink(Sink[T]):
-    """ """
-
-    def __init__(self, cls: Type[MutableSequence[T]] = list):
-        self.value = cls()
-
-    def send(self, value):
-        self.value.append(value)
-
-
-class SetSink(Sink[T]):
-    """ """
-
-    def __init__(self, cls: Type[MutableSet[T]] = set):
-        self.value = cls()
-
-    def send(self, value):
-        self.value.add(value)
-
-
-class NullSink(Sink[T]):
-    """ """
-
-    def send(self, value):
-        pass

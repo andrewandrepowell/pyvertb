@@ -1,6 +1,6 @@
 repos:
 - repo: https://github.com/ambv/black
-  rev: 21.4b2
+  rev: 21.5b2
   hooks:
   - id: black
     args:
@@ -9,3 +9,8 @@ repos:
   rev: 3.9.1
   hooks:
   - id: flake8
+- repo: https://github.com/pycqa/isort
+  rev: 5.8.0
+  hooks:
+    - id: isort
+      args: [--check-only --profile black]

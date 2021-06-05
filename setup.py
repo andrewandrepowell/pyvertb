@@ -1,7 +1,8 @@
-from typing import Union
-import setuptools
-import pathlib
 import os
+import pathlib
+from typing import Union
+
+import setuptools
 
 
 def get_version(

@@ -1,5 +1,6 @@
-from typing import Callable, Awaitable
-from pyvertb import Process, Module
+from typing import Awaitable, Callable
+
+from pyvertb import Module, Process
 
 
 def process(func: Callable[[None], Awaitable[None]]) -> Process:

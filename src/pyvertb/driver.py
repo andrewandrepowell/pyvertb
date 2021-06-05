@@ -1,9 +1,8 @@
 from typing import TypeVar
-from pyvertb import SynchDriver, SynchMonitor, Driver, Monitor, Interface, Transaction
 
+from pyvertb import Driver, Interface, SynchDriver, Transaction
 
 InterfaceType = TypeVar("InterfaceType", bound=Interface)
-TransactionType = TypeVar("TransactionType", bound=Transaction)
 InTransactionType = TypeVar("InTransactionType", bound=Transaction)
 OutTransactionType = TypeVar("OutTransactionType", bound=Transaction)
 
@@ -26,23 +25,3 @@ class BasicDriver(Driver[InterfaceType, InTransactionType, OutTransactionType]):
         while True:
             trans = await self.input.recv()
             self._synch_driver.drive(trans)
-
-
-class BasicMonitor(Monitor[InterfaceType, TransactionType]):
-    """ """
-
-    @property
-    def interface(self):
-        return self._synch_monitor.interface
-
-    def __init__(
-        self,
-        synch_monitor: SynchMonitor[InterfaceType, TransactionType],
-    ):
-        super().__init__()
-        self._synch_monitor = synch_monitor
-
-    async def run(self):
-        while True:
-            trans = await self._synch_monitor.monitor()
-            self._output.send(trans)

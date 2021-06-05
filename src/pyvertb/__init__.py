@@ -1,21 +1,11 @@
-from typing import (
-    Generic,
-    TypeVar,
-    Optional,
-    Iterator,
-    Deque,
-    AsyncIterator,
-    Set,
-    Type,
-    Tuple,
-)
 from abc import ABC, abstractmethod
+from asyncio import QueueEmpty, QueueFull
 from collections import deque
-from asyncio import QueueEmpty
+from typing import (AsyncIterator, Deque, Generic, Iterator, Optional, Set,
+                    Tuple, Type, TypeVar)
 
 import pyvertb.cocotb_compat as compat
 from pyvertb.util import Record
-
 
 T = TypeVar("T")
 
@@ -74,28 +64,36 @@ class Module(Component):
             c.stop()
 
 
+class ReceiveFailed(QueueEmpty):
+    """ """
+
+
+class SendFailed(QueueFull):
+    """ """
+
+
 class Source(AsyncIterator[T]):
     """ """
 
     @abstractmethod
-    def is_available(self) -> bool:
-        """ """
-
-    def __bool__(self) -> bool:
-        return self.is_available()
-
-    @abstractmethod
-    async def available(self) -> None:
+    def recv_is_ready(self) -> bool:
         """ """
 
     @abstractmethod
-    def recv_nowait(self) -> T:
+    async def recv_ready(self) -> None:
         """ """
+
+    @abstractmethod
+    def try_recv(self) -> T:
+        """ """
+        if self.recv_is_ready():
+            return self._recv()
+        raise ReceiveFailed
 
     async def recv(self) -> T:
         """ """
-        await self.available()
-        return self.recv_nowait()
+        await self.recv_ready()
+        return self._recv()
 
     def __aiter__(self) -> AsyncIterator[T]:
         return self
@@ -108,35 +106,107 @@ class Sink(Generic[T]):
     """ """
 
     @abstractmethod
-    def send(self, value: T) -> None:
+    def send_is_ready(self) -> bool:
         """ """
+
+    @abstractmethod
+    async def send_ready(self) -> None:
+        """ """
+
+    @abstractmethod
+    def _send(self, value: T) -> None:
+        """ """
+
+    def try_send(self, value: T) -> None:
+        """ """
+        if self.send_is_ready():
+            self._send(value)
+        raise SendFailed
+
+    async def send(self, value: T):
+        """ """
+        await self.send_ready()
+        self._send(value)
 
 
 class Channel(Sink[T], Source[T]):
     """ """
 
-    def __init__(self):
+    def __init__(self, *, depth: int = 0):
         super().__init__()
         self._deque: Deque[T] = deque()
         self._send_event = compat.Event()
 
-    def send(self, value):
-        self._deque.append(value)
-        self._send_event.set()
+    def recv_is_ready(self) -> bool:
+        return len(self._deque) != 0
 
-    def is_available(self):
-        return bool(self._deque)
-
-    async def available(self):
-        while not self.is_available():
+    async def recv_ready(self) -> None:
+        while not self.recv_is_ready():
             self._send_event.clear()
             await self._send_event.wait()
 
-    def recv_nowait(self):
-        try:
-            return self._deque.popleft()
-        except IndexError:
-            raise QueueEmpty from None
+    def _recv(self) -> T:
+        return self._deque.popleft()
+
+    def send_is_ready(self) -> bool:
+        return True
+
+    async def send_ready(self) -> None:
+        return
+
+    def _send(self, value: T) -> None:
+        self._deque.append(value)
+        self._send_event.set()
+
+
+class Signal(Sink[T], Source[T]):
+    """ """
+
+    def __init__(self):
+        self._value: Optional[T] = None
+        self._send_event = compat.Event()
+        self._recv_event = compat.Event()
+
+    def recv_is_ready(self) -> bool:
+        return self._send_event.is_set()
+
+    async def recv_ready(self) -> None:
+        while not self.recv_is_ready():
+            self._send_event.clear()
+            await self._send_event.wait()
+
+    def try_recv(self) -> T:
+        if self.recv_is_ready():
+            self._recv_event.set()
+            return self._value
+        raise ReceiveFailed
+
+    async def recv(self) -> T:
+        await self.recv_ready()
+        self._recv_event.set()
+        self._send_event.clear()
+        return self._value
+
+    def send_is_ready(self) -> bool:
+        return self._recv_event.is_set()
+
+    async def send_ready(self) -> None:
+        while not self.send_is_ready():
+            self._recv_event.clear()
+            await self._recv_event.wait()
+
+    def try_send(self, value: T) -> None:
+        if self.recv_is_ready():
+            self._value = value
+            self._send_event.set()
+            return
+        raise SendFailed
+
+    async def send(self, value: T) -> None:
+        await self.send_is_ready()
+        self._value = value
+        self._send_event.set()
+        self._recv_event.clear()
 
 
 class Interface(Record):

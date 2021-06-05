@@ -1,78 +1,84 @@
-from typing import (
-    Coroutine,
-    Any,
-    TypeVar,
-    AsyncIterable,
-    AsyncIterator,
-    List,
-    Awaitable,
-    Tuple,
-    Union,
-)
-
 from asyncio import CancelledError, InvalidStateError
+from typing import (Any, AsyncIterable, AsyncIterator, Awaitable, Coroutine,
+                    List, Mapping, Tuple, TypeVar, Union)
 
-from cocotb.handle import (
-    SimHandleBase,
-    HierarchyObject,
-    HierarchyArrayObject,
-    NonHierarchyIndexableObject,
-    ModifiableObject,
-    IntegerObject,
-    EnumObject,
-    StringObject,
-    RealObject,
-)
+import cocotb.outcomes
 from cocotb import fork
 from cocotb.binary import BinaryValue
-from cocotb.triggers import PythonTrigger, Event, First
 from cocotb.decorators import RunningTask
-import cocotb.outcomes
+from cocotb.handle import (EnumObject, HierarchyArrayObject, HierarchyObject,
+                           IntegerObject, ModifiableObject,
+                           NonHierarchyIndexableObject, RealObject,
+                           SimHandleBase, StringObject)
+from cocotb.triggers import Event, First, PythonTrigger
 
+from pyvertb.types import Record
 
-T = TypeVar("T")
-
-
-LogicArrayValueType = Union[int, BinaryValue]
-
-
-Object = SimHandleBase
-"""
-"""
-
-Scope = HierarchyObject
+ObjectHandle = SimHandleBase
 """
 """
 
-ScopeArray = HierarchyArrayObject
+ScopeHandle = HierarchyObject
 """
 """
 
-LogicSignalType = ModifiableObject
+ScopeArrayHandle = HierarchyArrayObject
 """
 """
 
-LogicArraySignalType = NonHierarchyIndexableObject
+LogicHandle = ModifiableObject
 """
 """
 
-Record = HierarchyObject
+LogicValue = Union[int, BinaryValue]
 """
 """
 
-Integer = IntegerObject
+LogicArrayHandle = NonHierarchyIndexableObject
 """
 """
 
-Enum = EnumObject
+LogicArrayValue = Union[int, BinaryValue]
 """
 """
 
-String = StringObject
+RecordHandle = HierarchyObject
 """
 """
 
-Real = RealObject
+RecordValue = Union[Mapping, Record]
+"""
+"""
+
+IntegerHandle = IntegerObject
+"""
+"""
+
+IntegerValue = int
+"""
+"""
+
+EnumHandle = EnumObject
+"""
+"""
+
+EnumValue = int
+"""
+"""
+
+StringHandle = StringObject
+"""
+"""
+
+StringValue = str
+"""
+"""
+
+RealHandle = RealObject
+"""
+"""
+
+RealValue = float
 """
 """
 
@@ -126,6 +132,9 @@ def task_result(task: Task) -> Any:
 Event = Event
 """
 """
+
+
+T = TypeVar("T")
 
 
 def aiter(aiterable: AsyncIterable[T]) -> AsyncIterator[T]:
