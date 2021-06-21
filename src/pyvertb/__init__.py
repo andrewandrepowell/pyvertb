@@ -83,7 +83,6 @@ class Source(AsyncIterator[T]):
     async def recv_ready(self) -> None:
         """ """
 
-    @abstractmethod
     def try_recv(self) -> T:
         """ """
         if self.recv_is_ready():
@@ -121,7 +120,8 @@ class Sink(Generic[T]):
         """ """
         if self.send_is_ready():
             self._send(value)
-        raise SendFailed
+        else:
+            raise SendFailed
 
     async def send(self, value: T):
         """ """

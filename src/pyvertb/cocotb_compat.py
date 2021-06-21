@@ -12,7 +12,7 @@ from cocotb.handle import (EnumObject, HierarchyArrayObject, HierarchyObject,
                            SimHandleBase, StringObject)
 from cocotb.triggers import Event, First, PythonTrigger
 
-from pyvertb.types import Record
+from pyvertb.util import Record
 
 ObjectHandle = SimHandleBase
 """
